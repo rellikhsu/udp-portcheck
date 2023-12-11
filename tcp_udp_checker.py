@@ -9,8 +9,12 @@ port_regex_template = r"udp\s+\d+\s+\d+\s+.*:{}\s"
 
 def is_udp_port_open(port, output):
     """ Check if the specified UDP port is open """
-    regex = re.compile(port_regex_template.format(port))
-    return bool(regex.search(output))
+    try:
+        regex = re.compile(port_regex_template.format(port))
+        return bool(regex.search(output))
+    except Exception as e:
+        print(f"Error in is_udp_port_open: {e}")
+        return False
 
 def get_netstat_output():
     """ Run the netstat command and return its output """
@@ -31,7 +35,7 @@ def tcp_server(port):
                     while True:
                         if not is_udp_port_open(port, get_netstat_output()):
                             print(f"UDP port {port} closed, stopping TCP server...")
-                            break  # Corrected indentation
+                            break
                         s.settimeout(1)
                         try:
                             conn, addr = s.accept()
@@ -54,3 +58,4 @@ if __name__ == "__main__":
 
     while True:
         time.sleep(1)
+
