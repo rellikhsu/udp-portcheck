@@ -25,13 +25,13 @@ def tcp_server(port):
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 try:
                     s.bind(("", port))
-                    s.listen(20) #
+                    s.listen(20)
                     print(f"TCP port {port} is listening...")
 
                     while True:
                         if not is_udp_port_open(port, get_netstat_output()):
                             print(f"UDP port {port} closed, stopping TCP server...")
-                                                        break
+                            break  # Corrected indentation
                         s.settimeout(1)
                         try:
                             conn, addr = s.accept()
