@@ -18,8 +18,13 @@ def is_udp_port_open(port, output):
 
 def get_netstat_output():
     """ Run the netstat command and return its output """
-    result = subprocess.run(['netstat', '-anu'], stdout=subprocess.PIPE)
-    return result.stdout.decode('utf-8')
+    try:
+        with subprocess.Popen(['netstat', '-anu'], stdout=subprocess.PIPE, text=True) as proc:
+            output, _ = proc.communicate()
+            return output
+    except Exception as e:
+        print(f"Error in get_netstat_output: {e}")
+        return ""
 
 def tcp_server(port):
     """ Start a simple server on the specified TCP port """
