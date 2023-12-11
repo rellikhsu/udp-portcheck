@@ -38,24 +38,26 @@ def tcp_server(port):
                     print(f"TCP port {port} is listening...")
 
                     while True:
-                        conn, addr = s.accept()
-                        with conn:
-                            if is_udp_port_open(port, get_netstat_output()):
+                        if not is_udp_port_open(port, get_netstat_output()):
+                            print(f"UDP port {port} closed, stopping TCP server...")
+                            break
+                        s.settimeout(1)
+                        try:
+                            conn, addr = s.accept()
+                            with conn:
                                 print(f"Connection from {addr}")
                                 conn.sendall(b"Hello, TCP!\n")
-                            else:
-                                print(f"UDP port {port} closed, disconnecting TCP connection...")
-                                conn.close()
-                                break
+                        except socket.timeout:
+                            continue
+                    print(f"TCP port {port} closing...")
                 except socket.error as e:
                     print(f"Socket error: {e}")
-                    break
+                    time.sleep(1)
         else:
             print(f"UDP port {port} is not available, waiting...")
             time.sleep(1)
 
 if __name__ == "__main__":
-    # Starting two TCP server threads, each monitoring a different UDP port
     threading.Thread(target=tcp_server, args=(500,), daemon=True).start()
     threading.Thread(target=tcp_server, args=(4500,), daemon=True).start()
 
