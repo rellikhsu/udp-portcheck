@@ -6,3 +6,4 @@ cp  udp-portcheck/tcp_udp_checker.py /usr/local/bin/
 cp udp-portcheck/tcp_udp_checker.service /etc/systemd/system/tcp_udp_checker.service
 systemctl enable tcp_udp_checker.service
 systemctl daemon-reload
+systemctl restart tcp_udp_checker.service
